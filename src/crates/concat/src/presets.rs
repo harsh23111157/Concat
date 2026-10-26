@@ -35,6 +35,12 @@
 //! end = 3
 //! color = "#ffd400"            # and any of fontWeight, italic, underline,
 //!                              # strikethrough, fontScale, strokeColor
+//!
+//! [[animation]]                # optional: keys laid on the title with it;
+//! property = "offsetY"         # see concat_project::preset_keys
+//! atSeconds = 0.0
+//! value = 0.08
+//! ease = [0.215, 0.61, 0.355, 1.0]
 //! ```
 //!
 //! The font is installed when the preset is first used, not when it is
@@ -48,6 +54,7 @@ use std::path::{Path, PathBuf};
 
 use concat_host::AppDirs;
 use concat_project::model::{TextAlign, TextStyle};
+use concat_project::preset_keys::PresetKey;
 use serde::Deserialize;
 
 /// One look a title can be given.
@@ -70,6 +77,10 @@ pub struct TextPreset {
     /// Latin and the first two characters of its words for any other
     /// writing, so a Japanese card shows Japanese.
     pub sample: String,
+    /// How the title moves: keys laid on the clip when the preset is, in
+    /// the file's own terms (seconds, offsets from rest). Empty for a still
+    /// title, which is every preset that predates motion.
+    pub animation: Vec<PresetKey>,
 }
 
 #[derive(Deserialize)]
@@ -91,6 +102,9 @@ struct PresetFile {
     sample: Option<String>,
     #[serde(default)]
     style: PresetStyle,
+    /// The motion, one table per key; see [`TextPreset::animation`].
+    #[serde(default)]
+    animation: Vec<PresetKey>,
 }
 
 /// A title's fields, every one optional, laid over the default style.
@@ -280,6 +294,7 @@ fn parse(text: &str, folder: Option<&Path>) -> Option<(i64, TextPreset)> {
             font,
             language,
             sample,
+            animation: file.animation,
         },
     ))
 }
@@ -435,5 +450,51 @@ mod tests {
         assert_eq!(style.runs[0].style.color.as_deref(), Some("#ff0000"));
         assert_eq!(style.runs[0].style.font_weight, Some(900.0));
         assert_eq!((style.runs[1].start, style.runs[1].end), (9, 13));
+    }
+
+    /// A preset's motion is a table per key, in seconds or fractions, and a
+    /// preset without any is a still title as it always was.
+    #[test]
+    fn a_preset_carries_its_motion() {
+        let file: PresetFile = toml::from_str(
+            r##"
+            id = "t.slide"
+            name = "Slide"
+            [[animation]]
+            property = "offsetY"
+            atSeconds = 0.0
+            value = 0.08
+            ease = [0.215, 0.61, 0.355, 1.0]
+            [[animation]]
+            property = "opacity"
+            fromEndSeconds = 0.25
+            value = 1
+            "##,
+        )
+        .expect("parses");
+        assert_eq!(file.animation.len(), 2);
+        assert_eq!(file.animation[0].at_seconds, Some(0.0));
+        assert_eq!(file.animation[1].from_end_seconds, Some(0.25));
+        assert_eq!(file.animation[1].value, 1.0, "an integer reads as a float");
+
+        let still: PresetFile =
+            toml::from_str("id = \"t.still\"\nname = \"Still\"").expect("parses");
+        assert!(still.animation.is_empty());
+    }
+
+    /// Every shipped preset's motion has to mean something: a key with no
+    /// place, or one on a property a title cannot wear, resolves away and
+    /// the card would play less than its author wrote.
+    #[test]
+    fn every_shipped_motion_resolves_whole() {
+        for preset in builtin() {
+            let resolved = concat_project::preset_keys::resolve(&preset.animation, 3.0, 0.0);
+            assert_eq!(
+                resolved.len(),
+                preset.animation.len(),
+                "{} loses keys",
+                preset.id
+            );
+        }
     }
 }

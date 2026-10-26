@@ -1,0 +1,47 @@
+# Word-pop entrance: the video's "bounce up" (scale 0 -> overshoot -> rest).
+id = "concat.motion-bounce-up"
+name = "Bounce up"
+language = "Latin"
+order = 40
+
+[style]
+content = "Bounce up"
+fontFamily = "Montserrat"
+fontWeight = 800
+fontSize = 0.1
+shadow = false
+
+# Pops from nothing, overshoots, settles: ~3 frames per beat at 30 fps.
+[[animation]]
+property = "scale"
+atSeconds = 0.0
+value = 0.0
+
+[[animation]]
+property = "scale"
+atSeconds = 0.12
+value = 1.18
+ease = [0.215, 0.61, 0.355, 1.0]
+
+[[animation]]
+property = "scale"
+atSeconds = 0.22
+value = 0.94
+ease = [0.645, 0.045, 0.355, 1.0]
+
+[[animation]]
+property = "scale"
+atSeconds = 0.3
+value = 1.0
+ease = [0.215, 0.61, 0.355, 1.0]
+
+[[animation]]
+property = "opacity"
+atSeconds = 0.0
+value = 0.0
+
+[[animation]]
+property = "opacity"
+atSeconds = 0.06
+value = 1.0
+ease = [0.215, 0.61, 0.355, 1.0]

@@ -1,0 +1,59 @@
+# Emphasis-style zoom entrance that settles to rest, with a soft exit.
+id = "concat.motion-zoom-settle"
+name = "Zoom settle"
+language = "Latin"
+order = 44
+offsetY = 0.0
+
+[style]
+content = "Zoom settle"
+fontFamily = "Montserrat"
+fontWeight = 700
+fontSize = 0.09
+shadow = false
+
+# In: lands from 150% with a fade.
+[[animation]]
+property = "scale"
+atSeconds = 0.0
+value = 1.5
+
+[[animation]]
+property = "scale"
+atSeconds = 0.45
+value = 1.0
+ease = [0.215, 0.61, 0.355, 1.0]
+
+[[animation]]
+property = "opacity"
+atSeconds = 0.0
+value = 0.0
+
+[[animation]]
+property = "opacity"
+atSeconds = 0.2
+value = 1.0
+ease = [0.215, 0.61, 0.355, 1.0]
+
+# Out: shrinks slightly and fades.
+[[animation]]
+property = "scale"
+fromEndSeconds = 0.3
+value = 1.0
+
+[[animation]]
+property = "scale"
+fromEndSeconds = 0.0
+value = 0.9
+ease = [0.55, 0.055, 0.675, 0.19]
+
+[[animation]]
+property = "opacity"
+fromEndSeconds = 0.3
+value = 1.0
+
+[[animation]]
+property = "opacity"
+fromEndSeconds = 0.0
+value = 0.0
+ease = [0.55, 0.055, 0.675, 0.19]

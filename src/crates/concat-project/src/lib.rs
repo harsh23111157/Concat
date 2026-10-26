@@ -26,6 +26,7 @@ pub mod doc;
 pub mod editor;
 pub mod model;
 pub mod placement;
+pub mod preset_keys;
 pub mod runs;
 pub mod speed;
 pub mod srt;

@@ -1,0 +1,47 @@
+# The viral entrance: slide up with bounce, settling out of a zoom.
+id = "concat.motion-bouncy-slide-up"
+name = "Bouncy slide up"
+language = "Latin"
+order = 41
+offsetY = 0.0
+
+[style]
+content = "Bouncy slide up"
+fontFamily = "Montserrat"
+fontWeight = 800
+fontSize = 0.09
+shadow = false
+
+# Rises from below with a back-out overshoot, 150% -> 100% scale.
+[[animation]]
+property = "offsetY"
+atSeconds = 0.0
+value = 0.12
+
+[[animation]]
+property = "offsetY"
+atSeconds = 0.35
+value = 0.0
+ease = [0.34, 1.56, 0.64, 1.0]
+
+[[animation]]
+property = "scale"
+atSeconds = 0.0
+value = 1.5
+
+[[animation]]
+property = "scale"
+atSeconds = 0.4
+value = 1.0
+ease = [0.215, 0.61, 0.355, 1.0]
+
+[[animation]]
+property = "opacity"
+atSeconds = 0.0
+value = 0.0
+
+[[animation]]
+property = "opacity"
+atSeconds = 0.1
+value = 1.0
+ease = [0.215, 0.61, 0.355, 1.0]

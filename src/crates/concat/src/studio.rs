@@ -42,6 +42,7 @@ use concat_project::commands::{ClipMove, ClipPatch, TrackFlag, TrimEdge};
 use concat_project::model::{
     self, AppliedFilter, Clip, Project, TextAlign, TextStyle, Timeline, Track, Transition,
 };
+use concat_project::preset_keys;
 use concat_project::{Command, PlayheadSide};
 
 mod backdrop;
@@ -4130,15 +4131,16 @@ impl Studio {
         duration: f64,
         preset: &str,
     ) -> Option<String> {
-        let (style, offset_y, font) = match self.text_presets.iter().find(|held| held.id == preset)
-        {
-            Some(found) => (
-                found.style.clone(),
-                found.offset_y,
-                presets::install_font(&self.host.dirs, found),
-            ),
-            None => (new_title_style(&self.prefs), None, None),
-        };
+        let (style, offset_y, font, motion) =
+            match self.text_presets.iter().find(|held| held.id == preset) {
+                Some(found) => (
+                    found.style.clone(),
+                    found.offset_y,
+                    presets::install_font(&self.host.dirs, found),
+                    found.animation.clone(),
+                ),
+                None => (new_title_style(&self.prefs), None, None, Vec::new()),
+            };
         // Over the picture, not under it: the first free lane above every
         // occupied one, minted at the top when there is none. A drop onto a
         // lane names its track and is placed there regardless.
@@ -4150,12 +4152,33 @@ impl Studio {
             offset_y,
             above: true,
         };
-        match font {
+        let created = match font {
             Some((family, path)) => self.apply(Command::Batch {
                 commands: vec![Command::AddFont { family, path }, add],
             }),
             None => self.apply(add),
+        };
+        // The preset's motion, laid as the keys the inspector writes, in a
+        // step of its own so one undo takes the movement off and leaves the
+        // title, and a second takes the title.
+        if let Some(clip_id) = created.as_ref().filter(|_| !motion.is_empty()) {
+            let keys = preset_keys::resolve(&motion, duration, offset_y.unwrap_or(0.0));
+            if !keys.is_empty() {
+                self.apply(Command::Batch {
+                    commands: keys
+                        .into_iter()
+                        .map(|key| Command::SetClipKey {
+                            clip_id: clip_id.clone(),
+                            property: key.property,
+                            at: key.at,
+                            value: key.value,
+                            ease: key.ease,
+                        })
+                        .collect(),
+                });
+            }
         }
+        created
     }
 
     /// A shape from the Stickers page, placed the way a title is: over

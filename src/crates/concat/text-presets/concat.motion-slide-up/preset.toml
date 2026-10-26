@@ -1,0 +1,36 @@
+# Smooth slide up with a fade, cubic out.
+id = "concat.motion-slide-up"
+name = "Slide up"
+language = "Latin"
+order = 42
+offsetY = 0.0
+
+[style]
+content = "Slide up"
+fontFamily = "Inter"
+fontWeight = 600
+fontSize = 0.08
+shadow = false
+
+# Short, quiet rise - the composition style's entrance.
+[[animation]]
+property = "offsetY"
+atSeconds = 0.0
+value = 0.03
+
+[[animation]]
+property = "offsetY"
+atSeconds = 0.27
+value = 0.0
+ease = [0.215, 0.61, 0.355, 1.0]
+
+[[animation]]
+property = "opacity"
+atSeconds = 0.0
+value = 0.0
+
+[[animation]]
+property = "opacity"
+atSeconds = 0.13
+value = 1.0
+ease = [0.215, 0.61, 0.355, 1.0]

@@ -1,0 +1,60 @@
+# Minimal, smooth entrance and exit in the SaaS-landing-page manner.
+id = "concat.motion-saas-glide"
+name = "SaaS glide"
+language = "Latin"
+order = 43
+offsetY = 0.0
+
+[style]
+content = "SaaS glide"
+fontFamily = "Inter"
+fontWeight = 500
+fontSize = 0.075
+tracking = -0.001
+shadow = false
+
+# In: slow cubic ease up with a fade.
+[[animation]]
+property = "offsetY"
+atSeconds = 0.0
+value = 0.05
+
+[[animation]]
+property = "offsetY"
+atSeconds = 0.6
+value = 0.0
+ease = [0.645, 0.045, 0.355, 1.0]
+
+[[animation]]
+property = "opacity"
+atSeconds = 0.0
+value = 0.0
+
+[[animation]]
+property = "opacity"
+atSeconds = 0.5
+value = 1.0
+ease = [0.215, 0.61, 0.355, 1.0]
+
+# Out: drifts up and fades over the last third of a second.
+[[animation]]
+property = "opacity"
+fromEndSeconds = 0.35
+value = 1.0
+
+[[animation]]
+property = "opacity"
+fromEndSeconds = 0.0
+value = 0.0
+ease = [0.55, 0.055, 0.675, 0.19]
+
+[[animation]]
+property = "offsetY"
+fromEndSeconds = 0.35
+value = 0.0
+
+[[animation]]
+property = "offsetY"
+fromEndSeconds = 0.0
+value = -0.03
+ease = [0.55, 0.055, 0.675, 0.19]
